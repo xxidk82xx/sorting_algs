@@ -1,3 +1,4 @@
+
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
@@ -53,7 +54,7 @@ impl<T:PartialOrd> SearchAlgs<T> for [T] {
         }
         None
     }
-
+    ///this is slower because its O(N) while bin is O(log(N))
     fn linear_search(&self, target:T) -> Option<usize> {
         for i in 0..self.len() {
             if self[i] == target {
@@ -65,11 +66,12 @@ impl<T:PartialOrd> SearchAlgs<T> for [T] {
 }   
 
 pub trait SortingAlgs<T:PartialOrd> {
+    /// fastest because it splits off logarithmiaclly however still NlogN
     fn quick_sort(&mut self) -> &mut Self;
 
     fn selection_sort(&mut self) -> &mut Self; 
 
-    /// uses a bubble sort algorithm to sort a given array   
+    /// uses a bubble sort algorithm to sort a given array (slowest)
     /// # Examples
     /// ```rust
     /// use sorting_algs::*;
@@ -80,7 +82,6 @@ pub trait SortingAlgs<T:PartialOrd> {
     fn bubble_sort(&mut self) -> &mut Self;
 
     fn insertion_sort(&mut self) -> &mut Self;
-
 }
 
 impl<T:PartialOrd> SortingAlgs<T> for [T] {
@@ -160,6 +161,8 @@ impl<T:PartialOrd> SortingAlgs<T> for [T] {
 
 #[cfg(test)]
 mod tests {
+    use std::vec;
+
     use super::*;
 
     #[test]
