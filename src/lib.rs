@@ -28,30 +28,46 @@ fn to_sorted<T:PartialOrd>(arr:&mut [T], to_move:usize) -> &[T] {
     arr
 } 
 
-///uses a binary search to find a target designated by T in an array designated by arr   
-///#Examples
-pub fn bin_search<T:PartialOrd>(arr: &[T], target:T) -> usize {
-    let mut left = 0;
-    let mut right = arr.len();
-    
-    while left != right - 1{
-        let mid = (left + right)/2;
-        if arr[mid] == target {
-            return mid;
-        } else if arr[mid] < target {
-            left = mid;
-        } else if target < arr[mid] {
-            right = mid;
-        }
-    }
-    left
+pub trait SearchAlgs<T:PartialOrd> {
+    fn bin_search(&self, target:T) -> Option<usize>;
+
+    fn linear_search(&self, target:T) -> Option<usize>;
 }
 
-#[allow(dead_code)]
-pub trait SortingAlgs<T:PartialOrd> {
-    fn quick_sort(&mut self) -> &mut [T];
+impl<T:PartialOrd> SearchAlgs<T> for [T] {
+    ///uses a binary search to find a target designated by T in an array designated by arr   
+    ///#Examples
+    fn bin_search(&self, target:T) -> Option<usize> {
+        let mut left = 0;
+        let mut right = self.len();
+        
+        while left != right - 1{
+            let mid = (left + right)/2;
+            if self[mid] == target {
+                return Some(mid);
+            } else if self[mid] < target {
+                left = mid;
+            } else if target < self[mid] {
+                right = mid;
+            }
+        }
+        None
+    }
 
-    fn selection_sort(&mut self) -> &mut [T]; 
+    fn linear_search(&self, target:T) -> Option<usize> {
+        for i in 0..self.len() {
+            if self[i] == target {
+                return Some(i);
+            }
+        }
+        None
+    }
+}   
+
+pub trait SortingAlgs<T:PartialOrd> {
+    fn quick_sort(&mut self) -> &mut Self;
+
+    fn selection_sort(&mut self) -> &mut Self; 
 
     /// uses a bubble sort algorithm to sort a given array   
     /// # Examples
@@ -61,9 +77,9 @@ pub trait SortingAlgs<T:PartialOrd> {
     ///   
     /// assert_eq!(arr.bubble_sort(), &mut *vec!(-10, 2, 5, 6))
     /// ``` 
-    fn bubble_sort(&mut self) -> &mut [T];
+    fn bubble_sort(&mut self) -> &mut Self;
 
-    fn insertion_sort(&mut self) -> &mut [T];
+    fn insertion_sort(&mut self) -> &mut Self;
 
 }
 
@@ -151,7 +167,7 @@ mod tests {
         let mut arr:[i32;8] = rand::random();
         arr.sort();
         let target:i32 = arr[rand::random::<usize>()%8];
-        let offset = bin_search(&arr, target );
+        let offset = arr.bin_search(target).unwrap();
         assert_eq!(arr[offset], target)
     }
 
